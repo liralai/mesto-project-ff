@@ -1,0 +1,13 @@
+.popup-image__figure {
+  max-width: 75vw;
+  max-height: 75vh;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+@media screen and (max-width: 656px) {
+  .popup-image__figure {
+    max-width: 88vw;
+    max-height: 88vh;
+  }
+}

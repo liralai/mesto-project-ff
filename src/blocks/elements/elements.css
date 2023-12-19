@@ -1,0 +1,22 @@
+.elements {
+  display: flex;
+  margin-bottom: 66px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  row-gap: 20px;
+  column-gap: 17px;
+}
+
+@media screen and (max-width: 904px) {
+  .elements {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+}
+
+@media screen and (max-width: 656px) {
+  .elements {
+    flex-direction: column;
+  }
+}
