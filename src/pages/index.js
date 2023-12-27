@@ -1,126 +1,91 @@
-import './index.css';
-
-import Card from "../components/Card.js";
-import FormValidator from "../components/FormValidator.js";
-import { UserInfo } from "../components/UserInfo.js";
-import { PopupWithImage } from "../components/PopupWithImage.js";
-import { PopupWithForm } from "../components/PopupWithForm.js";
-import { Section } from "../components/Section.js";
+import "./index.css";
+import { initialCards } from "../scripts/cards.js";
+import { closePopup, openPopup } from "../scripts/modal.js";
+import { renderCard, likeCard, deleteCard } from "../scripts/card.js";
+import { disableButton } from "../scripts/validate.js";
 
 const profileEditButtonEl = document.querySelector('.profile__edit-button');
+const popupProfileEl = document.querySelector('#popup-profile');
 const nameProfileInputEl = document.querySelector('#name-profile-input');
 const infoProfileInputEl = document.querySelector('#info-profile-input');
+const profileNameEl = document.querySelector('.profile__name');
+const profileTitleEl = document.querySelector('.profile__title');
 const formProfileEl = document.forms["profile-form"];
+const imageEl = document.querySelector('.popup-image__image');
+const imageTitleEl = document.querySelector('.popup-image__title');
 const cardsSection = document.querySelector('.elements');
+const popupPlaceEl = document.querySelector('#popup-place');
 const profileAddButtonEl = document.querySelector('.profile__add-button');
 const formCardEl = document.forms["card-form"];
+const namePlaceInputEl = document.querySelector('#name-place-input');
+const infoPlaceInputEl = document.querySelector('#info-place-input');
+const popupImageEl = document.querySelector('#popup-image');
+const closeButtons = document.querySelectorAll('.popup__close-button');
+const profileFormSubmitButton = formProfileEl.querySelector('.popup__save-button');
+const cardFormSubmitButton = formCardEl.querySelector('.popup__save-button');
 
-const initialCards = [
-  {
-    name: 'Архыз',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg'
-  },
-  {
-    name: 'Челябинская область',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg'
-  },
-  {
-    name: 'Иваново',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg'
-  },
-  {
-    name: 'Камчатка',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg'
-  },
-  {
-    name: 'Холмогорский район',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg'
-  },
-  {
-    name: 'Байкал',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
-  }
-];
-
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__save-button',
-  fieldsetSelector: '.popup__set',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__input-error_active'
+//Открытие карточки на весь экран
+const openImagePopup = (src, title) => {
+  imageTitleEl.textContent = title;
+  imageEl.src = src;
+  imageEl.alt = title;
+  openPopup(popupImageEl);
 };
 
-const formProfileValidation = new FormValidator(validationConfig, formProfileEl);
-formProfileValidation.enableValidation();
-formProfileValidation.disableButton();
+//Открытие попапа редактирования профиля по клику на кнопку редактирования
+profileEditButtonEl.addEventListener('click', function() {
+  openPopup(popupProfileEl);
 
-const formCardValidation = new FormValidator(validationConfig, formCardEl);
-formCardValidation.enableValidation();
-formCardValidation.disableButton();
-
-function createCard(items) {
-  const cardElement = new Card(items, '#card-template', handleCardClick); //Создание новой карточки с заданными значениями
-  return cardElement.getView();
-};
-
-const userInfo = new UserInfo({
-  nameSelector: '.profile__name',
-  infoSelector: '.profile__title'
+  nameProfileInputEl.value = profileNameEl.textContent;
+  infoProfileInputEl.value = profileTitleEl.textContent;
 });
 
-const popupWithImage = new PopupWithImage('#popup-image');
-popupWithImage.setEventListeners();
+//Сохранение изменений в попапе по клику на кнопку Сохранить
+formProfileEl.addEventListener('submit', function(event) {
 
-//Открытие попапа редактироsвания профиля по клику на кнопку редактирования
-profileEditButtonEl.addEventListener('click', () => {
-  popupEditProfile.open();
-  const profileInfo = userInfo.getUserInfo();
+  event.preventDefault();
 
-  nameProfileInputEl.value = profileInfo.name;
-  infoProfileInputEl.value = profileInfo.info;
+  profileNameEl.textContent = nameProfileInputEl.value;
+  profileTitleEl.textContent = infoProfileInputEl.value;
+
+  closePopup(popupProfileEl);
+
+  disableButton(profileFormSubmitButton);
 });
 
-const popupEditProfile = new PopupWithForm('#popup-profile', value => {
-  userInfo.setUserInfo({
-    name: value['name-profile-input'],
-    info: value['info-profile-input']
-});
-  popupEditProfile.close();
-});
-popupEditProfile.setEventListeners();
-
-profileAddButtonEl.addEventListener('click', () => {
-  popupEditCard.open();
-  formCardValidation.disableButton();
+//Создание карточки для каждого элемента массива
+initialCards.forEach((item) => {
+  renderCard(item, cardsSection, likeCard, deleteCard, openImagePopup, 'end' )
 });
 
-const popupEditCard = new PopupWithForm('#popup-place', value => {
-  const card = {
-    name: value['name-place-input'],
-    link: value['info-place-input']
-  };
-  section.addItem(createCard(card));
-  popupEditCard.close();
+//Открытие попапа добавления карточки по клику на кнопку редактирования
+profileAddButtonEl.addEventListener('click', function() {
+  openPopup(popupPlaceEl);
 });
-popupEditCard.setEventListeners();
 
-const section = new Section (
-  {
-    items: initialCards,
-    renderer: renderCard
+//Добавление новой карточки через форму
+formCardEl.addEventListener('submit', function(event) {
+  event.preventDefault();
 
-  },
-  cardsSection
-);
-section.renderItems();
+  //Запись в константу значений из полей формы
+  const value =
+    {
+      name: namePlaceInputEl.value,
+      link: infoPlaceInputEl.value
+    }
 
+  renderCard(value, cardsSection, likeCard, deleteCard, openImagePopup, 'start' )
+  closePopup(popupPlaceEl);
 
-function handleCardClick(name, link) {
-  popupWithImage.open(name, link);
-};
+  event.target.reset();
 
-function renderCard(item) {
-  const newCard = createCard(item);
-  section.addItem(newCard);
-}
+  disableButton(cardFormSubmitButton);
+});
+
+//Функция закрытия попапа по клику на крестик
+closeButtons.forEach((button) => {
+  const closeButton = button.closest('.popup');
+  button.addEventListener('click', () => closePopup(closeButton));
+});
+
+export { openImagePopup };
