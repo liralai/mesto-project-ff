@@ -1,12 +1,3 @@
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__save-button',
-  fieldsetSelector: '.popup__set',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__input-error_active'
-}
-
 //Функция показа ошибки в инпуте
 const showInputError = (formElement, inputElement, errorMessage, validationConfig) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -30,6 +21,12 @@ const checkInputValidity = (formElement, inputElement, validationConfig) => {
   } else {
     hideInputError(formElement, inputElement, validationConfig);
   }
+
+  if (inputElement.validity.patternMismatch) {
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+  } else {
+    inputElement.setCustomValidity('');
+}
 };
 
 const hasInvalidInput = (inputList) => {
@@ -74,6 +71,15 @@ const enableValidation = (validationConfig) => {
   });
 };
 
-enableValidation(validationConfig);
+const clearValidation = (formElement, validationConfig) => {
+  const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
+  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
+  disableButton(buttonElement);
 
-export {disableButton};
+  inputList.forEach((inputElement) => {
+    hideInputError(formElement, inputElement, validationConfig);
+      inputElement.setCustomValidity('');
+  });
+};
+
+export { disableButton, enableValidation, clearValidation };

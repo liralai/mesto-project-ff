@@ -1,4 +1,12 @@
 .profile__avatar {
-  width: 120px;
-  height: 120px;
+  position: relative;
+  block-size: fit-content;
+  inline-size: fit-content;
+  cursor: pointer;
+}
+
+.profile__avatar:hover .profile__avatar-overlay {
+  visibility: initial;
+  opacity: 1;
+  transition: visibility 0.3s, opacity 0.6s;
 }
