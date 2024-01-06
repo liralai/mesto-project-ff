@@ -19,14 +19,14 @@ const getUserData = async () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers
   })
-  .then((res) => getResponse(res));
+  .then(getResponse);
 };
 
 const getInitialCards = async () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-  .then((res) => getResponse(res));
+  .then(getResponse);
 };
 
 const getBaseInfo = async () => {
@@ -42,7 +42,7 @@ const editUserData = async (userData) => {
       about: userData.about,
     }),
   })
-  .then((res) => getResponse(res));
+  .then(getResponse);
 };
 
 const addNewCard = async (cardData) => {
@@ -54,7 +54,7 @@ const addNewCard = async (cardData) => {
       link: cardData.link,
     }),
   })
-  .then((res) => getResponse(res));
+  .then(getResponse);
 };
 
 const deleteCardApi = async (cardId) => {
@@ -62,23 +62,23 @@ const deleteCardApi = async (cardId) => {
     method: "DELETE",
     headers: config.headers
   })
-  .then((res) => getResponse(res));
+  .then(getResponse);
 };
 
-const addLikes = async (cardId) => {
+const addLike = async (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: config.headers
   })
-  .then((res) => getResponse(res));
+  .then(getResponse);
 };
 
-const removeLikes = async (cardId) => {
+const removeLike = async (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers
   })
-  .then((res) => getResponse(res));
+  .then(getResponse);
 };
 
 const updateAvatar = async (link) => {
@@ -89,7 +89,7 @@ const updateAvatar = async (link) => {
       avatar: link,
     }),
   })
-  .then((res) => getResponse(res));
+  .then(getResponse);
 };
 
-export { getUserData, getInitialCards, getBaseInfo, editUserData, addNewCard, deleteCardApi, addLikes, removeLikes, updateAvatar };
+export { getUserData, getInitialCards, getBaseInfo, editUserData, addNewCard, deleteCardApi, addLike, removeLike, updateAvatar };

@@ -1,10 +1,7 @@
-import { openImagePopup } from "../pages/index.js";
-import { addLikes, removeLikes } from "./api.js";
-import { openPopup } from "./modal.js";
+import { addLike, removeLike } from "./api.js";
 
 const cardTemplate = document.querySelector('#card-template').content;
 const cardEl = cardTemplate.querySelector('.card');
-const popupConfirm = document.querySelector('#popup-confirm');
 
 const createCard = (value, likeCard, deleteCard, openImagePopup, userId) => {
   const newCard = cardEl.cloneNode(true); //Клонирование содержимого template
@@ -34,8 +31,6 @@ const createCard = (value, likeCard, deleteCard, openImagePopup, userId) => {
     deleteButton.remove();
   };
 
-
-  deleteButton.addEventListener('click', deleteCard);
   likeButton.addEventListener('click', (event) => {likeCard(event, value._id)});
 
   cardImgEl.addEventListener('click', () => {
@@ -55,34 +50,19 @@ const renderCard = (item, container, likeCard, deleteCard, openPopupImage, place
   }
 };
 
-const deleteCard = (event, cardId) => {
-  openPopup(popupConfirm);
-  popupConfirm.dataset.cardId = cardId;
-};
-
 const likeCard = async (event, cardId) => {
-  let likesCounter = event.target.parentNode.querySelector('.card__like-button-counter');
+  const likesCounter = event.target.parentNode.querySelector('.card__like-button-counter');
 
-  if (event.target.classList.contains('card__like-button_active')) {
-    removeLikes(cardId)
-      .then((counter) => {
-        event.target.classList.remove('card__like-button_active');
-        likesCounter.textContent = counter.likes.length;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  } else {
-    addLikes(cardId)
-      .then((counter) => {
-        event.target.classList.add('card__like-button_active');
-        likesCounter.textContent = counter.likes.length;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  const likeMethod = event.target.classList.contains('card__like-button_active') ? removeLike : addLike;
+  likeMethod(cardId)
+    .then((counter) => {
+      event.target.classList.toggle('card__like-button_active');
+      likesCounter.textContent = counter.likes.length;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
-export { renderCard, deleteCard, likeCard };
+export { renderCard, likeCard };
 

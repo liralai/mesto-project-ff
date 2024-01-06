@@ -16,17 +16,17 @@ const hideInputError = (formElement, inputElement, validationConfig) => {
 
 //Функция проверки инпута на валидность
 const checkInputValidity = (formElement, inputElement, validationConfig) => {
+  if (inputElement.validity.patternMismatch) {
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+  } else {
+    inputElement.setCustomValidity('');
+  }
+
   if (!inputElement.validity.valid) {
     showInputError(formElement, inputElement, inputElement.validationMessage, validationConfig);
   } else {
     hideInputError(formElement, inputElement, validationConfig);
   }
-
-  if (inputElement.validity.patternMismatch) {
-    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
-  } else {
-    inputElement.setCustomValidity('');
-}
 };
 
 const hasInvalidInput = (inputList) => {
@@ -78,7 +78,7 @@ const clearValidation = (formElement, validationConfig) => {
 
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, validationConfig);
-      inputElement.setCustomValidity('');
+    inputElement.setCustomValidity('');
   });
 };
 

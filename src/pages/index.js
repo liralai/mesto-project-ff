@@ -1,6 +1,6 @@
 import "./index.css";
 import { closePopup, openPopup } from "../scripts/modal.js";
-import { renderCard, likeCard, deleteCard } from "../scripts/card.js";
+import { renderCard, likeCard } from "../scripts/card.js";
 import { enableValidation, clearValidation } from "../scripts/validation.js";
 import { getBaseInfo, editUserData, deleteCardApi, addNewCard, updateAvatar } from "../scripts/api.js";
 
@@ -62,6 +62,11 @@ const openImagePopup = (src, title) => {
   openPopup(popupImageEl);
 };
 
+const deleteCard = (event, cardId) => {
+  openPopup(confirmPopup);
+  confirmPopup.dataset.cardId = cardId;
+};
+
 const renderInitialCards = (initialCards, userId) => {
   initialCards.forEach((item) => {
     renderCard(item, cardsSection, likeCard, deleteCard, openImagePopup, 'end', userId)
@@ -69,10 +74,8 @@ const renderInitialCards = (initialCards, userId) => {
 }
 
 getBaseInfo()
-  .then((res) => {
-    const userInfo = res[0];
+  .then(([userInfo, initialCards]) => {
     userId = userInfo._id;
-    const initialCards = res[1];
     setUserInfo(userInfo);
     renderInitialCards(initialCards, userId);
   })
@@ -80,7 +83,7 @@ getBaseInfo()
     console.log(err);
   });
 
-const userFormSubmit = async (event) => {
+const userFormSubmit = (event) => {
   event.preventDefault();
 
   setLoading(true, profileFormSubmitButton);
@@ -106,7 +109,7 @@ const userFormSubmit = async (event) => {
     });
 };
 
-const setNewCard = async (event) => {
+const setNewCard = (event) => {
   event.preventDefault();
 
   setLoading(true, cardFormSubmitButton);
@@ -128,7 +131,8 @@ const setNewCard = async (event) => {
     });
 };
 
-const confirmDeletePopup = async () => {
+const confirmDeletePopup = (event) => {
+  event.preventDefault();
 
   deleteCardApi(confirmPopup.dataset.cardId)
     .then((res) => {
@@ -141,7 +145,7 @@ const confirmDeletePopup = async () => {
     });
 };
 
-const changeAvatar = async (event) => {
+const changeAvatar = (event) => {
   event.preventDefault();
 
   setLoading(true, confirmAvatarButton);
@@ -184,8 +188,8 @@ editAvatarButtonEl.addEventListener('click', function() {
 
 //Функция закрытия попапа по клику на крестик
 closeButtons.forEach((button) => {
-  const closeButton = button.closest('.popup');
-  button.addEventListener('click', () => closePopup(closeButton));
+  const closeButtonPopup = button.closest('.popup');
+  button.addEventListener('click', () => closePopup(closeButtonPopup));
 });
 
 formProfileEl.addEventListener('submit', userFormSubmit);
@@ -198,4 +202,4 @@ formAvatarEl.addEventListener('submit', changeAvatar);
 
 enableValidation(validationConfig);
 
-export { openImagePopup };
+export { deleteCard };
